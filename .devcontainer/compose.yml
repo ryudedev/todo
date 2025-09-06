@@ -1,0 +1,67 @@
+x-common-volumes: &common-volumes
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ${HOME}/.gitconfig:/etc/gitconfig
+    - ${HOME}/.aws:/home/${HOST_USER_NAME}/.aws
+
+services:
+  api:
+    build:
+      context: ${APP_DIR}/api
+      dockerfile: Dockerfile
+      args:
+        HOST_UID: ${HOST_UID}
+        HOST_GID: ${HOST_GID}
+        HOST_USER_NAME: ${HOST_USER_NAME}
+    environment:
+      - PYTHON_PATH=${PYTHON_PATH}
+    ports:
+      - 5000:5000
+    <<: *common-volumes
+    volumes:
+      - ${APP_DIR}/api:/workspace
+    command: sleep infinity
+    depends_on:
+      - db
+    networks:
+      - internal
+
+  client:
+    build:
+      context: ${APP_DIR}/client
+      dockerfile: Dockerfile
+      args:
+        HOST_UID: ${HOST_UID}
+        HOST_GID: ${HOST_GID}
+        HOST_USER_NAME: ${HOST_USER_NAME}
+    ports:
+      - 3000:3000
+    command: sleep infinity
+    <<: *common-volumes
+    volumes:
+      - ${APP_DIR}/client:/workspace
+    depends_on:
+      - api
+    networks:
+      - internal
+  db:
+    image: postgres:17
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - internal
+
+networks:
+  internal:
+    name: todos.internal
+    external: true
+
+volumes:
+  pg_data:
