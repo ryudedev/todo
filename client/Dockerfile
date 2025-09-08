@@ -1,16 +1,16 @@
 FROM mcr.microsoft.com/devcontainers/typescript-node:22
 
 RUN apt update && \
-    apt install -y \
-    bash-completion \
-    jq \
-    sudo \
-    zip \
-    unzip \
-    less \
-    vim \
-    lsb-release \
-    ca-certificates
+  apt install -y \
+  bash-completion \
+  jq \
+  sudo \
+  zip \
+  unzip \
+  less \
+  vim \
+  lsb-release \
+  ca-certificates
 
 ARG HOST_UID=1000
 ARG HOST_GID=1000
@@ -26,9 +26,9 @@ RUN if getent group node &>/dev/null; then groupdel node 2>/dev/null || true; fi
 # Create developer group and user
 #
 RUN groupadd -g ${HOST_GID} ${HOST_USER_NAME} 2>/dev/null || true \
-    && useradd -m -s /bin/bash -u ${HOST_UID} -g ${HOST_GID} ${HOST_USER_NAME} 2>/dev/null || true \
-    && echo "${HOST_USER_NAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/${HOST_USER_NAME} \
-    && chmod 0440 /etc/sudoers.d/${HOST_USER_NAME}
+  && useradd -m -s /bin/bash -u ${HOST_UID} -g ${HOST_GID} ${HOST_USER_NAME} 2>/dev/null || true \
+  && echo "${HOST_USER_NAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/${HOST_USER_NAME} \
+  && chmod 0440 /etc/sudoers.d/${HOST_USER_NAME}
 
 #
 # setup .bash_profile
@@ -104,4 +104,4 @@ USER ${HOST_USER_NAME}
 WORKDIR /home/${HOST_USER_NAME}
 
 # Set the working directory to workspace
-WORKDIR /workspace
+WORKDIR /workspace/client
