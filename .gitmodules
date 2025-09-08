@@ -1,0 +1,3 @@
+[submodule "api/src/database"]
+	path = api/src/database
+	url = https://github.com/ryudedev/todo_db_schema.git

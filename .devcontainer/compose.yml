@@ -7,8 +7,8 @@ x-common-volumes: &common-volumes
 services:
   api:
     build:
-      context: ${APP_DIR}/api
-      dockerfile: Dockerfile
+      context: ${APP_DIR}
+      dockerfile: api/Dockerfile
       args:
         HOST_UID: ${HOST_UID}
         HOST_GID: ${HOST_GID}
@@ -19,7 +19,7 @@ services:
       - 5000:5000
     <<: *common-volumes
     volumes:
-      - ${APP_DIR}/api:/workspace
+      - ${APP_DIR}:/workspace
     command: sleep infinity
     depends_on:
       - db
@@ -28,8 +28,8 @@ services:
 
   client:
     build:
-      context: ${APP_DIR}/client
-      dockerfile: Dockerfile
+      context: ${APP_DIR}
+      dockerfile: client/Dockerfile
       args:
         HOST_UID: ${HOST_UID}
         HOST_GID: ${HOST_GID}
@@ -37,9 +37,10 @@ services:
     ports:
       - 3000:3000
     command: sleep infinity
+    working_dir: /workspace/client
     <<: *common-volumes
     volumes:
-      - ${APP_DIR}/client:/workspace
+      - ${APP_DIR}:/workspace
     depends_on:
       - api
     networks:
